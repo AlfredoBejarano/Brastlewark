@@ -12,12 +12,12 @@ fun Bitmap.resize(newWidth: Int, newHeight: Int): Bitmap {
     val oldWidth = width
     val oldHeight = height
 
-    val widthScale = (newWidth / oldWidth).toFloat()
-    val heightScale = (newHeight / oldHeight).toFloat()
+    val widthScale = newWidth / oldWidth.toFloat()
+    val heightScale = newHeight / oldHeight.toFloat()
 
     val scaleMatrix = Matrix().apply {
         postScale(widthScale, heightScale)
     }
 
-    return Bitmap.createBitmap(this, 0, 0, oldWidth, newHeight, scaleMatrix, false)
+    return Bitmap.createBitmap(this, 0, 0, oldWidth, oldHeight, scaleMatrix, false)
 }
