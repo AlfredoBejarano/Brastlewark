@@ -1,7 +1,10 @@
 package me.alfredobejarano.brastlewark.datasource.network
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import me.alfredobejarano.brastlewark.BuildConfig
 import me.alfredobejarano.brastlewark.model.Gnome
+import me.alfredobejarano.brastlewark.utils.resize
 import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
 import org.json.JSONArray
 import org.json.JSONObject
@@ -92,5 +95,34 @@ object NetworkAdapter {
                 add(jsonArray.get(i).toString())
             }
         } as List<String>
+    }
+
+    /**
+     * Retrieves a Bitmap from an URL.
+     * @param source URL source for the bitmap.
+     * @param onSuccess Function reporting the bitmap from the URL.
+     * @param onError Function reporting any exception ocurring.
+     */
+    fun getBitmapFromURL(
+        source: String,
+        onSuccess: (bitmap: Bitmap) -> Unit,
+        onError: (e: Exception) -> Unit
+    ) = runOnWorkerThread {
+        try {
+            val url = URL(source)
+            val httpURLConnection = (url.openConnection() as HttpURLConnection).apply {
+                doInput = true
+                readTimeout = TIMEOUT
+                connectTimeout = TIMEOUT
+                connect()
+            }
+
+            val input = httpURLConnection.inputStream
+            val bitmap = BitmapFactory.decodeStream(input).resize(100, 100)
+
+            onSuccess(bitmap)
+        } catch (e: Exception) {
+            onError(e)
+        }
     }
 }
