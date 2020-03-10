@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import me.alfredobejarano.brastlewark.BuildConfig
 import me.alfredobejarano.brastlewark.model.Gnome
+import me.alfredobejarano.brastlewark.utils.asSafeURL
 import me.alfredobejarano.brastlewark.utils.resize
 import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
 import org.json.JSONArray
@@ -101,7 +102,7 @@ object NetworkAdapter {
      * Retrieves a Bitmap from an URL.
      * @param source URL source for the bitmap.
      * @param onSuccess Function reporting the bitmap from the URL.
-     * @param onError Function reporting any exception ocurring.
+     * @param onError Function reporting any exception thrown by this function.
      */
     fun getBitmapFromURL(
         source: String,
@@ -109,7 +110,7 @@ object NetworkAdapter {
         onError: (e: Exception) -> Unit
     ) = runOnWorkerThread {
         try {
-            val url = URL(source)
+            val url = URL(source.asSafeURL())
             val httpURLConnection = (url.openConnection() as HttpURLConnection).apply {
                 doInput = true
                 readTimeout = TIMEOUT
@@ -118,9 +119,9 @@ object NetworkAdapter {
             }
 
             val input = httpURLConnection.inputStream
-            val bitmap = BitmapFactory.decodeStream(input).resize(100, 100)
+            val bitmap = BitmapFactory.decodeStream(input)
 
-            onSuccess(bitmap)
+            onSuccess(bitmap.resize(100, 100))
         } catch (e: Exception) {
             onError(e)
         }
