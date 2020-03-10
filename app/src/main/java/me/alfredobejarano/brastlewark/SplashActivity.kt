@@ -10,16 +10,12 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        NetworkAdapter.getResource(
-            "https://raw.githubusercontent.com/rrafols/mobile_test/master/data.json",
-            60000L,
-            {
-                it.forEachIndexed { index, gnome ->
-                    Log.d("Gnome #$index", gnome.toString())
-                }
-            },
-            {
-                it.printStackTrace()
-            })
+        NetworkAdapter.getJSONResource({
+            it.forEachIndexed { index, gnome ->
+                Log.d("Gnome #$index", gnome.toString())
+            }
+        }, {
+            it.printStackTrace()
+        })
     }
 }

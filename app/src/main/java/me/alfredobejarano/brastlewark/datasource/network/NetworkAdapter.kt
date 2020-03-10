@@ -1,5 +1,6 @@
 package me.alfredobejarano.brastlewark.datasource.network
 
+import me.alfredobejarano.brastlewark.BuildConfig
 import me.alfredobejarano.brastlewark.model.Gnome
 import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
 import org.json.JSONArray
@@ -15,19 +16,16 @@ import java.util.concurrent.TimeUnit
  */
 object NetworkAdapter {
 
-    fun getResource(
-        resourceURL: String,
-        timeoutSeconds: Long,
-        onSuccess: (gnomes: List<Gnome>) -> Unit,
-        onError: (e: Exception) -> Unit
+    private val TIMEOUT = TimeUnit.SECONDS.toMillis(60000L).toInt()
+
+    fun getJSONResource(
+        onSuccess: (gnomes: List<Gnome>) -> Unit, onError: (e: Exception) -> Unit
     ) = try {
         runOnWorkerThread {
-            val url = URL(resourceURL)
-            val httpURLConnection = url.openConnection() as HttpURLConnection
-
-            TimeUnit.SECONDS.toMillis(timeoutSeconds).toInt().run {
-                httpURLConnection.readTimeout = this
-                httpURLConnection.connectTimeout = this
+            val url = URL(BuildConfig.SERVER_URL)
+            val httpURLConnection = (url.openConnection() as HttpURLConnection).apply {
+                connectTimeout = TIMEOUT
+                readTimeout = TIMEOUT
             }
 
             val jsonString = getResourceAsJsonString(httpURLConnection)
