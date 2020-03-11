@@ -21,6 +21,7 @@ class SplashActivity : AppCompatActivity() {
         )
 
         NetworkAdapter.getJSONResource({ list ->
+            Log.d("GNOME", list.first().toString())
             val imageSrc = list.first().thumbnailUrl
             Log.d("IMAGE", imageSrc)
             NetworkAdapter.getBitmapFromURL(imageSrc, {
