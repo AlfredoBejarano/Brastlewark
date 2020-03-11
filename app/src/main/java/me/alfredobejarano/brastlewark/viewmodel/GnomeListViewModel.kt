@@ -25,6 +25,7 @@ class GnomeListViewModel(
         if (gnomes.isEmpty()) {
             gnomeRepository.getGnomes {
                 gnomes.addAll(it.first ?: emptyList())
+                gnomes.sortBy { gnome -> gnome.name }
                 gnomesMutableLiveData.postValue(gnomes)
             }
         } else {
@@ -71,7 +72,11 @@ class GnomeListViewModel(
         gnomesMutableLiveData.map { gnomes.filter { it.hairColor == color } }
 
     fun searchForGnomeByName(query: String) = gnomesMutableLiveData.map {
-        gnomes.filter { it.name.contains(query) }
+        if (query.isBlank()) {
+            gnomes
+        } else {
+            gnomes.filter { it.name.contains(query) }
+        }
     }
 
     fun getGnomePicture(src: String) = MutableLiveData<Bitmap>().apply {
