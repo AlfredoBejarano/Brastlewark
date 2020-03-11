@@ -16,6 +16,8 @@ import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.Gnome
 import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.GnomeEntry.THUMBNAIL_URL_COLUMN
 import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.GnomeEntry.WEIGHT_COLUMN
 import me.alfredobejarano.brastlewark.model.Gnome
+import me.alfredobejarano.brastlewark.utils.asList
+import me.alfredobejarano.brastlewark.utils.asString
 
 class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
     private object GnomeEntry : BaseColumns {
@@ -62,8 +64,8 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
                 put(WEIGHT_COLUMN, weight)
                 put(HEIGHT_COLUMN, height)
                 put(HAIR_COLOR_COLUMN, hairColor)
-                put(PROFESSIONS_COLUMN, professions.toString())
-                put(FRIENDS_COLUMN, friends.toString())
+                put(PROFESSIONS_COLUMN, professions.asString())
+                put(FRIENDS_COLUMN, friends.asString())
             }
         }
         db?.insert(TABLE_NAME, null, values)?.toInt() ?: -1
@@ -77,8 +79,8 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         val weight = getDouble(getColumnIndex(WEIGHT_COLUMN))
         val height = getDouble(getColumnIndex(HEIGHT_COLUMN))
         val hairColor = getString(getColumnIndex(HAIR_COLOR_COLUMN))
-        val professions = listOf(getString(getColumnIndex(PROFESSIONS_COLUMN)))
-        val friends = listOf(getString(getColumnIndex(FRIENDS_COLUMN)))
+        val professions = getString(getColumnIndex(PROFESSIONS_COLUMN)).asList()
+        val friends = getString(getColumnIndex(FRIENDS_COLUMN)).asList()
 
         Gnome(id, name, thumbnail, age, weight, height, hairColor, professions, friends).also {
             close()

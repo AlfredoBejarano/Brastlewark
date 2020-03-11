@@ -1,5 +1,7 @@
 package me.alfredobejarano.brastlewark.utils
 
+private const val SEPARATOR = "|"
+
 /**
  * Checks if the text contains the "http" protocol and replaces it with https.
  *
@@ -10,3 +12,12 @@ fun String.asSafeURL() = if (contains("http") && !contains("https")) {
 } else {
     this
 }
+
+fun List<String>.asString() = StringBuilder().also { builder ->
+    forEach {
+        builder.append(it)
+        builder.append(SEPARATOR)
+    }
+}.toString()
+
+fun String.asList() = this.split(SEPARATOR).toList()

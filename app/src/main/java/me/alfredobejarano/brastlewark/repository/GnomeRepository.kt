@@ -14,18 +14,18 @@ class GnomeRepository(
     private fun getGnomesByNetwork(onComplete: (result: Pair<List<Gnome>?, Exception?>) -> Unit) =
         remoteDataSource.getJSONResource({
             it.forEach(localDataSource::create)
+            sharedPreferencesDataSource.generateGnomeCache()
             onComplete(Pair(it, null))
         }, {
             onComplete(Pair(null, it))
         })
 
-    private fun getGnomesByCache(onComplete: (result: Pair<List<Gnome>?, Exception?>) -> Unit) {
+    private fun getGnomesByCache(onComplete: (result: Pair<List<Gnome>?, Exception?>) -> Unit) =
         try {
             Pair(localDataSource.getAllGnomes(), null)
         } catch (e: Exception) {
             Pair(null, e)
         }
-    }
 
     fun getGnomes(onComplete: (result: Pair<List<Gnome>?, Exception?>) -> Unit) =
         runOnWorkerThread {
