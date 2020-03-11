@@ -17,8 +17,8 @@
             android:hint="@string/search_gnome_name"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:textColor="@android:color/white"
-            android:textColorHint="@android:color/white" />
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/black" />
 
         <ListView
             android:id="@+id/gnomesListView"
