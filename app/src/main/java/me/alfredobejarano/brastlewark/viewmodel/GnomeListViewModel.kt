@@ -1,15 +1,22 @@
 package me.alfredobejarano.brastlewark.viewmodel
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import me.alfredobejarano.brastlewark.model.Gnome
+import me.alfredobejarano.brastlewark.repository.CachedPhotoRepository
 import me.alfredobejarano.brastlewark.repository.GnomeRepository
 import me.alfredobejarano.brastlewark.utils.forLiveData
 import me.alfredobejarano.brastlewark.utils.map
 import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
 
-class GnomeListViewModel(private val gnomeRepository: GnomeRepository) : ViewModel() {
+class GnomeListViewModel(
+    private val gnomeRepository: GnomeRepository,
+    private val cachedPhotoRepository: CachedPhotoRepository
+) : ViewModel() {
+
     private val gnomes = mutableListOf<Gnome>()
     private val gnomesMutableLiveData = MutableLiveData<List<Gnome>>()
     val gnomesLiveData = gnomesMutableLiveData as LiveData<List<Gnome>>
@@ -65,5 +72,18 @@ class GnomeListViewModel(private val gnomeRepository: GnomeRepository) : ViewMod
 
     fun searchForGnomeByName(query: String) = gnomesMutableLiveData.map {
         gnomes.filter { it.name.contains(query) }
+    }
+
+    fun getGnomePicture(src: String) = MutableLiveData<Bitmap>().apply {
+        cachedPhotoRepository.getPicture(src) { postValue(it.first) }
+    } as LiveData<Bitmap>
+
+    class Factory(
+        private val repository: GnomeRepository,
+        private val photoRepository: CachedPhotoRepository
+    ) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+            GnomeListViewModel(repository, photoRepository) as T
     }
 }

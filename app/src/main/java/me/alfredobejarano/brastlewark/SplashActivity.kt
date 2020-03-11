@@ -1,59 +1,34 @@
 package me.alfredobejarano.brastlewark
 
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager.LayoutParams
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import me.alfredobejarano.brastlewark.datasource.local.BrastlewarkDatabase
-import me.alfredobejarano.brastlewark.datasource.local.SharedPreferencesDataSource
-import me.alfredobejarano.brastlewark.datasource.network.GnomeApiService
-import me.alfredobejarano.brastlewark.repository.CachedPhotoRepository
-import me.alfredobejarano.brastlewark.repository.GnomeRepository
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import me.alfredobejarano.brastlewark.utils.di.Injector
+import me.alfredobejarano.brastlewark.viewmodel.GnomeListViewModel
 
 class SplashActivity : AppCompatActivity() {
+    private lateinit var factory: GnomeListViewModel.Factory
+    private lateinit var viewModel: GnomeListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val imageView = ImageView(this)
-        windowManager?.addView(
-            imageView, LayoutParams(
-                LayoutParams.TYPE_APPLICATION,
-                LayoutParams.FLAG_NOT_FOCUSABLE
-            )
-        )
+        factory = Injector.getInstance(application).provideGnomeListViewModelFactory()
+        viewModel = ViewModelProvider(this, factory)[GnomeListViewModel::class.java]
 
-        val sharedPreferencesDataSource = SharedPreferencesDataSource(application)
-        val gnomeApiService = GnomeApiService
-        val database = BrastlewarkDatabase.getInstance(application)
-        val gnomeDataBaseHelper = database.getGnomeDataBaseHelper()
-        val cachedPhotoDataBaseHelper = database.getCachedPhotoDataBaseHelper()
-
-        val gnomeRepo =
-            GnomeRepository(gnomeApiService, gnomeDataBaseHelper, sharedPreferencesDataSource)
-        val pictureRepo = CachedPhotoRepository(
-            application,
-            gnomeApiService,
-            cachedPhotoDataBaseHelper,
-            sharedPreferencesDataSource
-        )
-
-        gnomeRepo.getGnomes { result ->
-            result.first?.let { list ->
-                Log.d("GNOME", list.first().toString())
-                val imageSrc = list.first().thumbnailUrl
-                pictureRepo.getPicture(imageSrc) { photoResult ->
-                    photoResult.first?.let {
-                        Log.d("Bitmap", it.toString())
-                        runOnUiThread { imageView.setImageBitmap(it) }
-                    } ?: run {
-                        result.second?.printStackTrace()
-                    }
-                }
-            } ?: run {
-                result.second?.printStackTrace()
-            }
-        }
+        viewModel.gnomesLiveData.observe(this, Observer {
+            getGnomePicture(it.first().thumbnailUrl)
+        })
+        viewModel.getGnomeList()
     }
+
+    private fun getGnomePicture(src: String) =
+        viewModel.getGnomePicture(src).observe(this, Observer {
+            val imageView = ImageView(this)
+            windowManager.addView(imageView, LayoutParams(LayoutParams.TYPE_APPLICATION))
+            imageView.setImageBitmap(it)
+        })
 }
