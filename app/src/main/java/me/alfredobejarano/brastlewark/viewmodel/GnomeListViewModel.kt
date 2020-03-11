@@ -62,4 +62,8 @@ class GnomeListViewModel(private val gnomeRepository: GnomeRepository) : ViewMod
 
     fun filterByHairColor(color: String) =
         gnomesMutableLiveData.map { gnomes.filter { it.hairColor == color } }
+
+    fun searchForGnomeByName(query: String) = gnomesMutableLiveData.map {
+        gnomes.filter { it.name.contains(query) }
+    }
 }
