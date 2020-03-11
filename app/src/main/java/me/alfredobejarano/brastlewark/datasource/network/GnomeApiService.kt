@@ -37,6 +37,8 @@ object GnomeApiService {
             val gnomes = getGnomes(population)
 
             onSuccess(gnomes)
+
+            httpURLConnection.disconnect()
         }
     } catch (e: Exception) {
         onError(e)
@@ -122,6 +124,8 @@ object GnomeApiService {
             val bitmap = BitmapFactory.decodeStream(input)
 
             onSuccess(bitmap.resize(100, 100))
+
+            httpURLConnection.disconnect()
         } catch (e: Exception) {
             onError(e)
         }
