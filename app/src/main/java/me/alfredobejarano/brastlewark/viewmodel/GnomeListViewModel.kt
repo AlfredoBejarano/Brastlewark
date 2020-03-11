@@ -55,7 +55,15 @@ class GnomeListViewModel(
     }
 
     fun filterByProfession(profession: String) =
-        gnomesMutableLiveData.map { gnomes.filter { it.professions.contains(profession) } }
+        gnomesMutableLiveData.map {
+            gnomes.filter {
+                if (profession.isBlank()) {
+                    it.professions.isEmpty()
+                } else {
+                    it.professions.contains(profession)
+                }
+            }
+        }
 
     fun filterByName(name: String) = gnomesMutableLiveData.map { gnomes.filter { it.name == name } }
 

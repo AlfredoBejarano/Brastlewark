@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -27,9 +28,6 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash)
-        binding.searchBar.addTextChangedListener {
-            viewModel.searchForGnomeByName(it?.toString() ?: "")
-        }
         requestDependencies()
         observeGnomeList()
         viewModel.getGnomeList()
@@ -47,6 +45,26 @@ class SplashActivity : AppCompatActivity() {
 
     private fun getGnomeProfilePicture(src: String, iv: ImageView) =
         viewModel.getGnomePicture(src).observe(this, Observer { iv.setImageBitmap(it) })
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+        setupSearchView(menu?.findItem(R.id.action_search)?.actionView as? SearchView)
+        return true
+    }
+
+    private fun setupSearchView(searchView: SearchView?) = searchView?.run {
+        isFocusable = true
+        isIconified = false
+        isIconifiedByDefault = false
+        queryHint = getString(R.string.search_gnome_name)
+        setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) =
+                viewModel.searchForGnomeByName(query ?: "").let { true }
+
+            override fun onQueryTextChange(newText: String?) =
+                viewModel.searchForGnomeByName(newText ?: "").let { true }
+        })
+    }
 
     inner class GnomeListAdapter(private val ctx: Context, private val gnomes: List<Gnome>) :
         ArrayAdapter<Gnome>(ctx, R.layout.item_gnome, gnomes) {
