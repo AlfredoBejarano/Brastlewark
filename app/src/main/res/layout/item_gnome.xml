@@ -35,9 +35,10 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@id/gnomeProfilePicture"
+            android:alpha="0.75"
             android:gravity="start|center_vertical"
             android:text="@{String.format(@string/gnome_name, gnome.name, gnome.age)}"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             tools:text="I'm a Gnome!" />
 
@@ -50,8 +51,10 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@id/gnomeProfilePicture"
+            android:alpha="0.5"
             android:ellipsize="end"
             android:singleLine="true"
+            android:textColor="@android:color/white"
             tools:text="Professions: Swordmaker, Doctor, Necromancer" />
     </RelativeLayout>
 </layout>

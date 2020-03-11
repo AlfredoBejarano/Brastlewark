@@ -13,12 +13,19 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:background="?android:attr/colorPrimary"
+            android:drawableStart="@drawable/ic_search_white_24dp"
+            android:drawableEnd="@drawable/ic_filter_list_white_24dp"
+            android:drawablePadding="8dp"
             android:elevation="2dp"
+            android:gravity="start|center_vertical"
             android:hint="@string/search_gnome_name"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:textColor="@android:color/black"
-            android:textColorHint="@android:color/black" />
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white" />
 
         <ListView
             android:id="@+id/gnomesListView"

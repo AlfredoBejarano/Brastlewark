@@ -75,7 +75,7 @@ class GnomeListViewModel(
         if (query.isBlank()) {
             gnomes
         } else {
-            gnomes.filter { it.name.contains(query) }
+            gnomes.filter { it.name.contains(query, true) }
         }
     }
 
