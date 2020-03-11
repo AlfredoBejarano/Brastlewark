@@ -18,11 +18,12 @@ class CachedPhotoRepository(
     private val sharedPreferencesDataSource: SharedPreferencesDataSource
 ) {
     private fun storeBitmapInCache(bitmap: Bitmap, src: String) = try {
-        val filePath = File(app.cacheDir, "cached-${src.getFileNameFromURL()}").path
+        val picName = src.getFileNameFromURL()
+        val filePath = File(app.cacheDir, "cached-$picName").path
         val outputStream = FileOutputStream(filePath)
         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
         localDataSource.create(src, filePath)
-        sharedPreferencesDataSource.generatePictureCache()
+        sharedPreferencesDataSource.generatePictureCache(picName)
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -46,7 +47,7 @@ class CachedPhotoRepository(
 
     fun getPicture(src: String, onComplete: (Pair<Bitmap?, Exception?>) -> Unit) =
         runOnWorkerThread {
-            if (sharedPreferencesDataSource.isPictureCacheValid()) {
+            if (sharedPreferencesDataSource.isPictureCacheValid(src.getFileNameFromURL())) {
                 getPictureByCache(src, onComplete)
             } else {
                 getPictureByNetwork(src, onComplete)

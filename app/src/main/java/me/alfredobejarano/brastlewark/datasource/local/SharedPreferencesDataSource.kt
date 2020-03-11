@@ -36,6 +36,6 @@ class SharedPreferencesDataSource(private val application: Application) {
     fun isGnomeCacheValid() = isCacheValid(GNOME_CACHE_KEY)
     fun generateGnomeCache() = storeCacheTimeStamp(GNOME_CACHE_KEY)
 
-    fun isPictureCacheValid() = isCacheValid(PICTURES_CACHE)
-    fun generatePictureCache() = storeCacheTimeStamp(PICTURES_CACHE)
+    fun isPictureCacheValid(picName: String) = isCacheValid("${PICTURES_CACHE}_$picName")
+    fun generatePictureCache(picName: String) = storeCacheTimeStamp("${PICTURES_CACHE}_$picName")
 }
