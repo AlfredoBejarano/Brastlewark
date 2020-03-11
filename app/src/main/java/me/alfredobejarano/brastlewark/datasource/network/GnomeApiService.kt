@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Kotlin object that handles all the URL connections through the project.
  */
-object NetworkAdapter {
+object GnomeApiService {
 
     private val TIMEOUT = TimeUnit.SECONDS.toMillis(60000L).toInt()
 
