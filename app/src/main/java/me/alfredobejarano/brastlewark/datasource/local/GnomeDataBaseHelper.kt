@@ -33,14 +33,14 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         const val NAME_KEY = "name_param"
 
         const val SQL_CREATE_TABLE = "CREATE TABLE $TABLE_NAME (" +
-                "${BaseColumns._ID} INTEGER PRIMARY KEY" +
-                "$NAME_COLUMN TEXT" +
-                "$THUMBNAIL_URL_COLUMN TEXT" +
-                "$AGE_COLUMN INTEGER" +
-                "$WEIGHT_COLUMN REAL" +
-                "$HEIGHT_COLUMN REAL" +
-                "$HAIR_COLOR_COLUMN TEXT" +
-                "$PROFESSIONS_COLUMN TEXT" +
+                "${BaseColumns._ID} INTEGER PRIMARY KEY, " +
+                "$NAME_COLUMN TEXT, " +
+                "$THUMBNAIL_URL_COLUMN TEXT, " +
+                "$AGE_COLUMN INTEGER, " +
+                "$WEIGHT_COLUMN REAL, " +
+                "$HEIGHT_COLUMN REAL, " +
+                "$HAIR_COLOR_COLUMN TEXT, " +
+                "$PROFESSIONS_COLUMN TEXT, " +
                 "$FRIENDS_COLUMN TEXT)"
 
         const val SQL_DELETE_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
@@ -82,9 +82,7 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         val professions = getString(getColumnIndex(PROFESSIONS_COLUMN)).asList()
         val friends = getString(getColumnIndex(FRIENDS_COLUMN)).asList()
 
-        Gnome(id, name, thumbnail, age, weight, height, hairColor, professions, friends).also {
-            close()
-        }
+        Gnome(id, name, thumbnail, age, weight, height, hairColor, professions, friends)
     } ?: Gnome()
 
     fun getAllGnomes(): List<Gnome> {
@@ -93,6 +91,7 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
             while (cursor?.moveToNext() == true) {
                 add(getGnomeFromCursor(cursor))
             }
+            cursor?.close()
             filter { it.id > -1 }
         }
     }
@@ -101,6 +100,7 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         val selection = "$NAME_COLUMN = ?"
         val args = arrayOf(gnomeName)
         val cursor = db?.query(TABLE_NAME, null, selection, args, null, null, null)
+        cursor?.close()
         return getGnomeFromCursor(cursor)
     }
 }

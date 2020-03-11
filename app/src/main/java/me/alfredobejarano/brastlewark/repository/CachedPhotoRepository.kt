@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import me.alfredobejarano.brastlewark.datasource.local.CachedPhotoDataBaseHelper
 import me.alfredobejarano.brastlewark.datasource.local.SharedPreferencesDataSource
 import me.alfredobejarano.brastlewark.datasource.network.GnomeApiService
+import me.alfredobejarano.brastlewark.utils.getFileNameFromURL
 import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
 import java.io.File
 import java.io.FileOutputStream
@@ -17,7 +18,7 @@ class CachedPhotoRepository(
     private val sharedPreferencesDataSource: SharedPreferencesDataSource
 ) {
     private fun storeBitmapInCache(bitmap: Bitmap, src: String) = try {
-        val filePath = File(app.cacheDir, "cached-$src").path
+        val filePath = File(app.cacheDir, "cached-${src.getFileNameFromURL()}").path
         val outputStream = FileOutputStream(filePath)
         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
         localDataSource.create(src, filePath)

@@ -18,7 +18,7 @@ class CachedPhotoDataBaseHelper(private val db: SQLiteDatabase?) {
         const val URL_KEY = "url_param"
 
         const val SQL_CREATE_TABLE = "CREATE TABLE $TABLE_NAME (" +
-                "$URL_COLUMN TEXT PRIMARY KEY" +
+                "$URL_COLUMN TEXT PRIMARY KEY, " +
                 "$PATH_COLUMN TEXT)"
 
         const val SQL_DELETE_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
@@ -41,11 +41,19 @@ class CachedPhotoDataBaseHelper(private val db: SQLiteDatabase?) {
     }
 
     fun getCachedPicture(src: String): String {
-        val selection = URL_COLUMN
+        val selection = "$URL_COLUMN = ?"
         val selectionArgs = arrayOf(src)
-        return db?.query(TABLE_NAME, null, selection, selectionArgs, null, null, null)?.run {
+        return db?.query(
+            TABLE_NAME,
+            arrayOf(PATH_COLUMN),
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )?.run {
             if (moveToNext()) {
-                getString(getColumnIndex(URL_COLUMN))
+                getString(getColumnIndex(PATH_COLUMN))
             } else {
                 ""
             }

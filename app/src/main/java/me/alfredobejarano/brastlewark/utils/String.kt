@@ -21,3 +21,5 @@ fun List<String>.asString() = StringBuilder().also { builder ->
 }.toString()
 
 fun String.asList() = this.split(SEPARATOR).toList()
+
+fun String.getFileNameFromURL() = split("/").last()

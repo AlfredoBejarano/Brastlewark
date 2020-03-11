@@ -22,9 +22,9 @@ class GnomeRepository(
 
     private fun getGnomesByCache(onComplete: (result: Pair<List<Gnome>?, Exception?>) -> Unit) =
         try {
-            Pair(localDataSource.getAllGnomes(), null)
+            onComplete(Pair(localDataSource.getAllGnomes(), null))
         } catch (e: Exception) {
-            Pair(null, e)
+            onComplete(Pair(null, e))
         }
 
     fun getGnomes(onComplete: (result: Pair<List<Gnome>?, Exception?>) -> Unit) =

@@ -14,11 +14,18 @@ class BrastlewarkDatabase private constructor(ctx: Context) :
 
         private var INSTANCE: BrastlewarkDatabase? = null
 
-        fun getInstance(app: Application) = INSTANCE ?: synchronized(this) {
+        fun getInstance(app: Application): BrastlewarkDatabase = INSTANCE ?: synchronized(this) {
             INSTANCE ?: createInstance(app).also { INSTANCE = it }
         }
 
-        private fun createInstance(app: Application) = BrastlewarkDatabase(app)
+        private fun createInstance(app: Application): BrastlewarkDatabase {
+            val database = BrastlewarkDatabase(app)
+            val writableDataBase = database.writableDatabase
+            return database.apply {
+                gnomeDataBaseHelper = GnomeDataBaseHelper(writableDataBase)
+                cachedPhotoDataBaseHelper = CachedPhotoDataBaseHelper(writableDataBase)
+            }
+        }
     }
 
     private lateinit var gnomeDataBaseHelper: GnomeDataBaseHelper
