@@ -9,6 +9,7 @@ import me.alfredobejarano.brastlewark.model.Gnome
 import me.alfredobejarano.brastlewark.repository.CachedPhotoRepository
 import me.alfredobejarano.brastlewark.repository.GnomeRepository
 import me.alfredobejarano.brastlewark.utils.forLiveData
+import me.alfredobejarano.brastlewark.utils.has
 import me.alfredobejarano.brastlewark.utils.map
 import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
 
@@ -16,6 +17,9 @@ class GnomeListViewModel(
     private val gnomeRepository: GnomeRepository,
     private val cachedPhotoRepository: CachedPhotoRepository
 ) : ViewModel() {
+
+    val hairColors = setOf<String>()
+    val professions = setOf<String>()
 
     private val gnomes = mutableListOf<Gnome>()
     private val gnomesMutableLiveData = MutableLiveData<List<Gnome>>()
@@ -26,6 +30,10 @@ class GnomeListViewModel(
             gnomeRepository.getGnomes {
                 gnomes.addAll(it.first ?: emptyList())
                 gnomes.sortBy { gnome -> gnome.name }
+                gnomes.forEach { gnome ->
+                    professions.plus(gnome.professions)
+                    hairColors.plus(gnome.hairColor)
+                }
                 gnomesMutableLiveData.postValue(gnomes)
             }
         } else {
@@ -48,36 +56,24 @@ class GnomeListViewModel(
         gnomes.first().weight.toInt()..gnomes.last().weight.toInt()
     }
 
-    fun getHairColors() = forLiveData {
-        val colors = setOf<String>()
-        gnomes.forEach { colors.plus(it.hairColor) }
-        colors
-    }
-
-    fun filterByProfession(profession: String) =
-        gnomesMutableLiveData.map {
-            gnomes.filter {
-                if (profession.isBlank()) {
-                    it.professions.isEmpty()
-                } else {
-                    it.professions.contains(profession)
-                }
-            }
+    fun filterGnomes(
+        ageRange: IntRange,
+        heightRange: IntRange,
+        weightRange: IntRange,
+        hairColors: Set<String>,
+        professions: Set<String>
+    ) = gnomesMutableLiveData.map {
+        gnomes.filter {
+            val ageInRange = ageRange.has(it.age)
+            val weightInRange = weightRange.has(it.weight)
+            val heightIntRange = heightRange.has(it.height)
+            val withHairColor =
+                if (hairColors.isEmpty()) true else hairColors.contains(it.hairColor)
+            val withProfessions =
+                if (professions.isEmpty()) true else professions.any(it.professions::contains)
+            ageInRange && weightInRange && heightIntRange && withHairColor && withProfessions
         }
-
-    fun filterByName(name: String) = gnomesMutableLiveData.map { gnomes.filter { it.name == name } }
-
-    fun filterByAge(minAge: Int, maxAge: Int) =
-        gnomesMutableLiveData.map { gnomes.filter { it.age in minAge..maxAge } }
-
-    fun filterByHeight(minHeight: Int, maxHeight: Int) =
-        gnomesMutableLiveData.map { gnomes.filter { it.height.toInt() in minHeight..maxHeight } }
-
-    fun filterByWeight(minWeight: Int, maxWeight: Int) =
-        gnomesMutableLiveData.map { gnomes.filter { it.weight.toInt() in minWeight..maxWeight } }
-
-    fun filterByHairColor(color: String) =
-        gnomesMutableLiveData.map { gnomes.filter { it.hairColor == color } }
+    }
 
     fun searchForGnomeByName(query: String) = gnomesMutableLiveData.map {
         if (query.isBlank()) {

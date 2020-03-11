@@ -2,4 +2,13 @@
     <string name="gnome_name">%1$s\nAge: %2$d</string>
     <string name="app_name">Brastlewark</string>
     <string name="search_gnome_name">Search gnome by name</string>
+    <string name="filter">Filter Gnomes</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="weight">Weight</string>
+    <string name="age">Age</string>
+    <string name="height">Height</string>
+    <string name="hair_color">Hair color</string>
+    <string name="professions">Professions</string>
+    <string name="apply_filters">Apply Filters</string>
 </resources>

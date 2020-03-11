@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/ageLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:alpha="0.7"
+        android:gravity="center"
+        android:text="@string/age" />
+
+    <EditText
+        android:id="@+id/ageFrom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ageLabel"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:alpha="0.7"
+        android:hint="@string/from"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/ageTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ageLabel"
+        android:layout_alignParentEnd="true"
+        android:alpha="0.7"
+        android:hint="@string/to"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/weightLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ageTo"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:alpha="0.7"
+        android:gravity="center"
+        android:text="@string/weight" />
+
+    <EditText
+        android:id="@+id/weightFrom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/weightLabel"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:alpha="0.7"
+        android:hint="@string/from"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/weightTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/weightLabel"
+        android:layout_alignParentEnd="true"
+        android:alpha="0.7"
+        android:hint="@string/to"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/heightLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/weightTo"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:alpha="0.7"
+        android:gravity="center"
+        android:text="@string/height" />
+
+    <EditText
+        android:id="@+id/heightFrom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/heightLabel"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:alpha="0.7"
+        android:hint="@string/from"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/heightTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/heightLabel"
+        android:layout_alignParentEnd="true"
+        android:alpha="0.7"
+        android:hint="@string/to"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/hairColorsLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/heightTo"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:alpha="0.7"
+        android:gravity="center"
+        android:text="@string/hair_color" />
+
+    <LinearLayout
+        android:id="@+id/hairCheckBoxGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/hairColorsLabel"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical" />
+
+    <TextView
+        android:id="@+id/professionsLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/heightTo"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:alpha="0.7"
+        android:gravity="center"
+        android:text="@string/professions" />
+
+    <LinearLayout
+        android:id="@+id/professionsCheckBoxGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/searchButton"
+        android:layout_below="@id/professionsLabel"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical" />
+
+    <Button
+        android:id="@+id/searchButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="?android:attr/colorAccent"
+        android:text="@string/apply_filters" />
+</RelativeLayout>

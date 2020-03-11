@@ -30,6 +30,9 @@ class SplashActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash)
         requestDependencies()
         observeGnomeList()
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setLogo(R.drawable.ic_filter_list_white_24dp)
         viewModel.getGnomeList()
     }
 
@@ -53,9 +56,6 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun setupSearchView(searchView: SearchView?) = searchView?.run {
-        isFocusable = true
-        isIconified = false
-        isIconifiedByDefault = false
         queryHint = getString(R.string.search_gnome_name)
         setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) =
