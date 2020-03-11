@@ -19,7 +19,7 @@
             android:elevation="2dp"
             android:gravity="start|center_vertical"
             android:hint="@string/search_gnome_name"
-            android:imeOptions="actionSearch"
+            android:imeOptions="actionDone"
             android:inputType="text"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
