@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -65,6 +66,16 @@ class SplashActivity : AppCompatActivity() {
                 viewModel.searchForGnomeByName(newText ?: "").let { true }
         })
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_filter) {
+            launchFilterDialog()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun launchFilterDialog() =
+        FiltersAlertDialog().show(supportFragmentManager, FiltersAlertDialog::class.java.simpleName)
 
     inner class GnomeListAdapter(private val ctx: Context, private val gnomes: List<Gnome>) :
         ArrayAdapter<Gnome>(ctx, R.layout.item_gnome, gnomes) {
