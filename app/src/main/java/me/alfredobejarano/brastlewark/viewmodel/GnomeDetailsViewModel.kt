@@ -15,13 +15,13 @@ class GnomeDetailsViewModel(
     private val cachedPhotoRepository: CachedPhotoRepository
 ) : ViewModel() {
 
-    fun getGnome(name: String) = MutableLiveData<Gnome>().apply {
-        runOnWorkerThread { gnomeRepository.getGnomeByName(name) { postValue(it.first) } }
-    } as LiveData<Gnome>
+    fun getGnome(name: String) = MutableLiveData<Pair<Gnome?, Exception?>>().apply {
+        runOnWorkerThread { gnomeRepository.getGnomeByName(name) { postValue(it) } }
+    } as LiveData<Pair<Gnome?, Exception?>>
 
-    fun getGnomePicture(src: String) = MutableLiveData<Bitmap>().apply {
-        runOnWorkerThread { cachedPhotoRepository.getPicture(src) { postValue(it.first) } }
-    } as LiveData<Bitmap>
+    fun getGnomePicture(src: String) = MutableLiveData<Pair<Bitmap?, Exception?>>().apply {
+        runOnWorkerThread { cachedPhotoRepository.getPicture(src) { postValue(it) } }
+    } as LiveData<Pair<Bitmap?, Exception?>>
 
     class Factory(
         private val repository: GnomeRepository,

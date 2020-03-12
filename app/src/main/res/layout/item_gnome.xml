@@ -56,5 +56,26 @@
             android:singleLine="true"
             android:textColor="@android:color/white"
             tools:text="Professions: Swordmaker, Doctor, Necromancer" />
+
+        <ProgressBar
+            android:id="@+id/gnomeLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="?android:attr/windowBackground" />
+
+        <ProgressBar
+            android:id="@+id/pictureProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="8dp"
+            android:layout_toStartOf="@id/name"
+            android:background="?android:attr/windowBackground" />
     </RelativeLayout>
 </layout>

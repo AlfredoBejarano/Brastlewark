@@ -130,26 +130,12 @@ object GnomeApiService {
                 val bitmap = BitmapFactory.decodeStream(input)
                 onSuccess(bitmap.resize(100, 100))
             } else {
-                onSuccess(createErrorBitmap(responseCode))
+                onError(Exception(responseCode.toString()))
             }
 
             httpURLConnection.disconnect()
         } catch (e: Exception) {
-            onSuccess(createErrorBitmap(0))
+            onError(e)
         }
-    }
-
-    private fun createErrorBitmap(responseCode: Int): Bitmap {
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            textSize = 25f
-            color = Color.BLACK
-            textAlign = Paint.Align.LEFT
-        }
-        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-        Canvas(bitmap).apply {
-            drawColor(-1)
-            drawText(responseCode.toString(), 30f, 60f, paint)
-        }
-        return bitmap
     }
 }

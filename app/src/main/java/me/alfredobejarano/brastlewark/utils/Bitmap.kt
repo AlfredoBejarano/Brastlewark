@@ -1,7 +1,10 @@
 package me.alfredobejarano.brastlewark.utils
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
+import android.graphics.Paint
 
 /**
  * Returns a scaled Bitmap with the new dimensions.
@@ -20,4 +23,19 @@ fun Bitmap.resize(newWidth: Int, newHeight: Int): Bitmap {
     }
 
     return Bitmap.createBitmap(this, 0, 0, oldWidth, oldHeight, scaleMatrix, false)
+}
+
+fun createErrorBitmap(text: String): Bitmap {
+    val canvasText = text.getNameCapitalLetters()
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textSize = 30f
+        color = Color.WHITE
+        textAlign = Paint.Align.LEFT
+    }
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+    Canvas(bitmap).apply {
+        drawColor(arrayOf(Color.RED, Color.DKGRAY, Color.BLUE, Color.GRAY).random())
+        drawText(canvasText, 30f, 60f, paint)
+    }
+    return bitmap
 }

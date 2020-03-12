@@ -23,22 +23,28 @@ class GnomeListViewModel(
     var professions = setOf<String>()
 
     private val gnomes = mutableListOf<Gnome>()
-    private val gnomesMutableLiveData = MutableLiveData<List<Gnome>>()
-    val gnomesLiveData = gnomesMutableLiveData as LiveData<List<Gnome>>
+    private val gnomesMutableLiveData = MutableLiveData<Pair<List<Gnome>?, Exception?>>()
+    val gnomesLiveData = gnomesMutableLiveData as LiveData<Pair<List<Gnome>?, Exception?>>
 
     fun getGnomeList() = runOnWorkerThread {
         if (gnomes.isEmpty()) {
-            gnomeRepository.getGnomes {
-                gnomes.addAll(it.first ?: emptyList())
-                gnomes.sortBy { gnome -> gnome.name }
-                gnomes.forEach { gnome ->
-                    hairColors = hairColors.plus(gnome.hairColor)
-                    professions = professions.plus(gnome.professions)
+            gnomeRepository.getGnomes { result ->
+                result.first?.let { gnomesListResult ->
+                    gnomes.addAll(gnomesListResult)
+                    if (gnomesListResult.isNotEmpty()) {
+                        gnomes.sortBy { gnome -> gnome.name }
+                        gnomes.forEach { gnome ->
+                            hairColors = hairColors.plus(gnome.hairColor)
+                            professions = professions.plus(gnome.professions)
+                        }
+                    }
+                    gnomesMutableLiveData.postValue(Pair(gnomes, null))
+                } ?: run {
+                    gnomesMutableLiveData.postValue(result)
                 }
-                gnomesMutableLiveData.postValue(gnomes)
             }
         } else {
-            gnomesMutableLiveData.postValue(gnomes)
+            gnomesMutableLiveData.postValue(Pair(gnomes, null))
         }
     }
 
@@ -66,7 +72,7 @@ class GnomeListViewModel(
         hairColors: Set<String>,
         professions: Set<String>
     ) = gnomesMutableLiveData.map {
-        gnomes.filter {
+        Pair(gnomes.filter {
             val ageInRange = ageRange.has(it.age)
             val weightInRange = weightRange.has(it.weight)
             val heightIntRange = heightRange.has(it.height)
@@ -76,20 +82,20 @@ class GnomeListViewModel(
             val withProfessions =
                 if (professions.isEmpty()) true else it.professions.containsAll(professions)
             ageInRange && weightInRange && friendsInRage && heightIntRange && withHairColor && withProfessions
-        }.sortedBy { it.name }
+        }.sortedBy { it.name }, null)
     }
 
     fun searchForGnomeByName(query: String) = gnomesMutableLiveData.map {
-        if (query.isBlank()) {
+        Pair(if (query.isBlank()) {
             gnomes
         } else {
             gnomes.filter { it.name.contains(query, true) }
-        }
+        }, null)
     }
 
-    fun getGnomePicture(src: String) = MutableLiveData<Bitmap>().apply {
-        runOnWorkerThread { cachedPhotoRepository.getPicture(src) { postValue(it.first) } }
-    } as LiveData<Bitmap>
+    fun getGnomePicture(src: String) = MutableLiveData<Pair<Bitmap?, Exception?>>().apply {
+        runOnWorkerThread { cachedPhotoRepository.getPicture(src) { postValue(it) } }
+    } as LiveData<Pair<Bitmap?, Exception?>>
 
     class Factory(
         private val repository: GnomeRepository,

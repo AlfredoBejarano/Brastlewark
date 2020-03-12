@@ -11,7 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -20,7 +22,10 @@ import me.alfredobejarano.brastlewark.databinding.ActivitySplashBinding
 import me.alfredobejarano.brastlewark.databinding.ItemGnomeBinding
 import me.alfredobejarano.brastlewark.model.Gnome
 import me.alfredobejarano.brastlewark.utils.asCleanString
+import me.alfredobejarano.brastlewark.utils.createErrorBitmap
 import me.alfredobejarano.brastlewark.utils.di.Injector
+import me.alfredobejarano.brastlewark.utils.observeWith
+import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
 import me.alfredobejarano.brastlewark.utils.setRoundBitmap
 import me.alfredobejarano.brastlewark.viewmodel.GnomeListViewModel
 
@@ -33,6 +38,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash)
         requestDependencies()
+        observeErrors()
         observeGnomeList()
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setHomeButtonEnabled(true)
@@ -40,18 +46,25 @@ class SplashActivity : AppCompatActivity() {
         viewModel.getGnomeList()
     }
 
+    private fun observeErrors() = Events.errorLiveData.observe(this, Observer {
+        it?.run {
+            Toast.makeText(this@SplashActivity, localizedMessage, Toast.LENGTH_SHORT).show()
+        }
+    })
+
     private fun requestDependencies() {
         factory = Injector.getInstance(application).provideGnomeListViewModelFactory()
         viewModel = ViewModelProvider(this, factory)[GnomeListViewModel::class.java]
     }
 
-    private fun observeGnomeList() = viewModel.gnomesLiveData.observe(this, Observer {
+    private fun observeGnomeList() = viewModel.gnomesLiveData.observeWith(this) {
         binding.gnomesListView.apply {
             adapter = null
             adapter = GnomeListAdapter(this@SplashActivity, it)
             setOnItemClickListener { _, _, position, _ -> openGnomeDetailsActivity(it[position].name) }
         }
-    })
+        binding.splashLoading.visibility = View.GONE
+    }
 
     private fun openGnomeDetailsActivity(gnomeName: String) = startActivity(
         Intent(
@@ -60,8 +73,19 @@ class SplashActivity : AppCompatActivity() {
         ).putExtra(GnomeActivity.GNOME_NAME_KEY, gnomeName)
     )
 
-    private fun getGnomeProfilePicture(src: String, iv: ImageView) =
-        viewModel.getGnomePicture(src).observe(this, Observer(iv::setRoundBitmap))
+    private fun getGnomeProfilePicture(gnome: Gnome, iv: ImageView, pb: ProgressBar) =
+        viewModel.getGnomePicture(gnome.thumbnailUrl).observeWith(this, {
+            iv.setRoundBitmap(it)
+            pb.visibility = View.GONE
+        }, {
+            runOnWorkerThread {
+                val bitmap = createErrorBitmap(gnome.name)
+                runOnUiThread {
+                    iv.setRoundBitmap(bitmap)
+                    pb.visibility = View.GONE
+                }
+            }
+        })
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
@@ -99,7 +123,8 @@ class SplashActivity : AppCompatActivity() {
                 val gnomeAtPosition = gnomes[position]
                 gnome = gnomeAtPosition
                 professions.text = gnomeAtPosition.professions.asCleanString()
-                getGnomeProfilePicture(gnomeAtPosition.thumbnailUrl, gnomeProfilePicture)
+                gnomeLoading.visibility = View.GONE
+                getGnomeProfilePicture(gnomeAtPosition, gnomeProfilePicture, pictureProgress)
             }.root
     }
 }

@@ -1,5 +1,7 @@
 package me.alfredobejarano.brastlewark.utils
 
+import java.util.Locale
+
 private const val SEPARATOR = "|"
 
 /**
@@ -29,3 +31,12 @@ fun List<String>.asCleanString() = this.map { it.replace(" T", "T") }.sortedBy {
     .replace("[", "")
     .replace(", ]", "")
     .replace("]", "")
+
+fun String.getNameCapitalLetters() = if (length > 2 && contains(" ")) {
+    val words = this.split(" ")
+    "${words.first().first()}${words.last().first()}".toUpperCase(Locale.getDefault())
+} else if (length < 2) {
+    this
+} else {
+    this.take(2)
+}

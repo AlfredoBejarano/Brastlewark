@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.MenuItem
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
 import android.widget.LinearLayout.LayoutParams.MATCH_PARENT
@@ -14,10 +15,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import me.alfredobejarano.brastlewark.databinding.ActivityGnomeBinding
+import me.alfredobejarano.brastlewark.model.Gnome
+import me.alfredobejarano.brastlewark.utils.createErrorBitmap
 import me.alfredobejarano.brastlewark.utils.di.Injector
+import me.alfredobejarano.brastlewark.utils.observeWith
+import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
 import me.alfredobejarano.brastlewark.utils.setRoundBitmap
 import me.alfredobejarano.brastlewark.viewmodel.GnomeDetailsViewModel
 
@@ -49,13 +53,13 @@ class GnomeActivity : AppCompatActivity() {
         super.onOptionsItemSelected(item)
     }
 
-    private fun getGnome(name: String) = viewModel.getGnome(name).observe(this, Observer {
+    private fun getGnome(name: String) = viewModel.getGnome(name).observeWith(this) {
         databinding.apply {
             gnome = it
             gnomeHairColor.compoundDrawables.filterNotNull().run {
                 if (isNotEmpty()) setGnomeHairColor(first(), it.hairColor)
             }
-            getGnomePicture(it?.thumbnailUrl ?: "")
+            getGnomePicture(it)
             it.professions.forEach {
                 addTextView(it.replace(" T", ""), gnomeProfessionsList)
             }
@@ -63,9 +67,9 @@ class GnomeActivity : AppCompatActivity() {
                 addTextView(it, gnomeFriendsList)
             }
             setFriendsClickListeners()
+            gnomeLoading.visibility = View.GONE
         }
-    })
-
+    }
 
     private fun addTextView(text: String, parent: LinearLayout) {
         TextView(this).apply {
@@ -101,10 +105,19 @@ class GnomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun getGnomePicture(src: String) = viewModel.getGnomePicture(src).observe(
-        this,
-        Observer(databinding.gnomeProfilePicture::setRoundBitmap)
-    )
+    private fun getGnomePicture(gnome: Gnome) =
+        viewModel.getGnomePicture(gnome.thumbnailUrl).observeWith(this, {
+            it.run(databinding.gnomeProfilePicture::setRoundBitmap)
+            databinding.pictureLoading.visibility = View.GONE
+        }, {
+            runOnWorkerThread {
+                val bitmap = createErrorBitmap(gnome.name)
+                runOnUiThread {
+                    databinding.gnomeProfilePicture.setRoundBitmap(bitmap)
+                    databinding.pictureLoading.visibility = View.GONE
+                }
+            }
+        })
 
     private fun requestDependencies() {
         factory = Injector.getInstance(application).provideGnomeDetailsViewModelFactory()
