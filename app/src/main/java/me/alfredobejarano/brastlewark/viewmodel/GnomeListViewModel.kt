@@ -70,7 +70,7 @@ class GnomeListViewModel(
             val withHairColor =
                 if (hairColors.isEmpty()) true else hairColors.contains(it.hairColor)
             val withProfessions =
-                if (professions.isEmpty()) true else professions.any(it.professions::contains)
+                if (professions.isEmpty()) true else it.professions.containsAll(professions)
             ageInRange && weightInRange && heightIntRange && withHairColor && withProfessions
         }.sortedBy { it.name }
     }
