@@ -2,6 +2,9 @@ package me.alfredobejarano.brastlewark.datasource.network
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import me.alfredobejarano.brastlewark.BuildConfig
 import me.alfredobejarano.brastlewark.model.Gnome
 import me.alfredobejarano.brastlewark.utils.asSafeURL
@@ -120,14 +123,33 @@ object GnomeApiService {
                 connect()
             }
 
-            val input = httpURLConnection.inputStream
-            val bitmap = BitmapFactory.decodeStream(input)
+            val responseCode = httpURLConnection.responseCode
 
-            onSuccess(bitmap.resize(100, 100))
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val input = httpURLConnection.inputStream
+                val bitmap = BitmapFactory.decodeStream(input)
+                onSuccess(bitmap.resize(100, 100))
+            } else {
+                onSuccess(createErrorBitmap(responseCode))
+            }
 
             httpURLConnection.disconnect()
         } catch (e: Exception) {
-            onError(e)
+            onSuccess(createErrorBitmap(0))
         }
+    }
+
+    private fun createErrorBitmap(responseCode: Int): Bitmap {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            textSize = 25f
+            color = Color.BLACK
+            textAlign = Paint.Align.LEFT
+        }
+        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        Canvas(bitmap).apply {
+            drawColor(-1)
+            drawText(responseCode.toString(), 30f, 60f, paint)
+        }
+        return bitmap
     }
 }

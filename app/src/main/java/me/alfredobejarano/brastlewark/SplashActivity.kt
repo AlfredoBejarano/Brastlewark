@@ -91,10 +91,12 @@ class SplashActivity : AppCompatActivity() {
             ItemGnomeBinding.inflate(LayoutInflater.from(ctx), parent, false).apply {
                 val gnomeAtPosition = gnomes[position]
                 gnome = gnomeAtPosition
-                professions.text = gnomeAtPosition.professions.toString()
-                    .replace("[", "")
-                    .replace(", ]", "")
-                    .replace("]", "")
+                professions.text =
+                    gnomeAtPosition.professions.map { it.replace(" T", "T") }.sortedBy { it }
+                        .toString()
+                        .replace("[", "")
+                        .replace(", ]", "")
+                        .replace("]", "")
                 getGnomeProfilePicture(gnomeAtPosition.thumbnailUrl, gnomeProfilePicture)
             }.root
     }

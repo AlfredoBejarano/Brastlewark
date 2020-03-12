@@ -26,7 +26,7 @@ class FiltersAlertDialog : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, parent: ViewGroup?, state: Bundle?) =
         DialogFiltersBinding.inflate(inflater, parent, false).also {
             binding = it
-            binding.ageLabel.setOnClickListener { dismissAllowingStateLoss() }
+            binding.closeButton.setOnClickListener { dismissAllowingStateLoss() }
             factory = Injector.getInstance(requireActivity().application)
                 .provideGnomeListViewModelFactory()
             viewModel =
@@ -66,13 +66,14 @@ class FiltersAlertDialog : DialogFragment() {
         binding.weightFrom.setText(it.first.toString())
     })
 
-    private fun setupHairColorOptions() = viewModel.hairColors.forEach {
+    private fun setupHairColorOptions() = viewModel.hairColors.sortedBy { it }.forEach {
         createCheckbox(it, binding.hairCheckBoxGroup)
     }
 
-    private fun setupProfessionOptions() = viewModel.professions.forEach {
-        createCheckbox(it, binding.professionsCheckBoxGroup)
-    }
+    private fun setupProfessionOptions() =
+        viewModel.professions.map { it.replace(" T", "T") }.sortedBy { it }.forEach {
+            createCheckbox(it, binding.professionsCheckBoxGroup)
+        }
 
     private fun createCheckbox(text: String, parent: ViewGroup) {
         val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
