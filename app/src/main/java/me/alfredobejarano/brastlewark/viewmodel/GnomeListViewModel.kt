@@ -9,6 +9,7 @@ import me.alfredobejarano.brastlewark.model.Gnome
 import me.alfredobejarano.brastlewark.repository.CachedPhotoRepository
 import me.alfredobejarano.brastlewark.repository.GnomeRepository
 import me.alfredobejarano.brastlewark.utils.forLiveData
+import me.alfredobejarano.brastlewark.utils.getRangeFrom
 import me.alfredobejarano.brastlewark.utils.has
 import me.alfredobejarano.brastlewark.utils.map
 import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
@@ -42,24 +43,26 @@ class GnomeListViewModel(
     }
 
     fun getAgeSettings() = forLiveData {
-        gnomes.sortBy { it.age }
-        gnomes.first().age..gnomes.last().age
+        gnomes.getRangeFrom({ it.age }, { it.first.age..it.second.age })
     }
 
     fun getHeightSettings() = forLiveData {
-        gnomes.sortBy { it.height }
-        gnomes.first().height..gnomes.last().height
+        gnomes.getRangeFrom({ it.height }, { it.first.height..it.second.height })
     }
 
     fun getWeightSettings() = forLiveData {
-        gnomes.sortBy { it.weight }
-        gnomes.first().weight..gnomes.last().weight
+        gnomes.getRangeFrom({ it.weight }, { it.first.weight..it.second.weight })
+    }
+
+    fun getFriendsSettings() = forLiveData {
+        gnomes.getRangeFrom({ it.friends.size }, { it.first.friends.size..it.second.friends.size })
     }
 
     fun filterGnomes(
         ageRange: IntRange,
         heightRange: IntRange,
         weightRange: IntRange,
+        friendsRange: IntRange,
         hairColors: Set<String>,
         professions: Set<String>
     ) = gnomesMutableLiveData.map {
@@ -67,11 +70,12 @@ class GnomeListViewModel(
             val ageInRange = ageRange.has(it.age)
             val weightInRange = weightRange.has(it.weight)
             val heightIntRange = heightRange.has(it.height)
+            val friendsInRage = friendsRange.has(it.friends.size)
             val withHairColor =
                 if (hairColors.isEmpty()) true else hairColors.contains(it.hairColor)
             val withProfessions =
                 if (professions.isEmpty()) true else it.professions.containsAll(professions)
-            ageInRange && weightInRange && heightIntRange && withHairColor && withProfessions
+            ageInRange && weightInRange && friendsInRage && heightIntRange && withHairColor && withProfessions
         }.sortedBy { it.name }
     }
 

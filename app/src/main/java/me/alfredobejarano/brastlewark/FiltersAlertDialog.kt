@@ -11,6 +11,7 @@ import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import me.alfredobejarano.brastlewark.databinding.DialogFiltersBinding
@@ -40,10 +41,11 @@ class FiltersAlertDialog : DialogFragment() {
         view.setBackgroundColor(Color.BLACK)
     }
 
-    private fun setupRangedSettings() {
-        getAgeSettings()
-        getHeightSettings()
-        getWeightSettings()
+    private fun setupRangedSettings() = binding.run {
+        getRangeSettings(viewModel.getAgeSettings(), ageFrom, ageTo)
+        getRangeSettings(viewModel.getWeightSettings(), weightFrom, weightTo)
+        getRangeSettings(viewModel.getHeightSettings(), heightFrom, heightTo)
+        getRangeSettings(viewModel.getFriendsSettings(), friendsFrom, friendsTo)
     }
 
     private fun setupMultipleOptionSettings() {
@@ -51,20 +53,11 @@ class FiltersAlertDialog : DialogFragment() {
         setupProfessionOptions()
     }
 
-    private fun getAgeSettings() = viewModel.getAgeSettings().observe(this, Observer {
-        binding.ageTo.setText(it.last.toString())
-        binding.ageFrom.setText(it.first.toString())
-    })
-
-    private fun getHeightSettings() = viewModel.getHeightSettings().observe(this, Observer {
-        binding.heightTo.setText(it.last.toString())
-        binding.heightFrom.setText(it.first.toString())
-    })
-
-    private fun getWeightSettings() = viewModel.getWeightSettings().observe(this, Observer {
-        binding.weightTo.setText(it.last.toString())
-        binding.weightFrom.setText(it.first.toString())
-    })
+    private fun getRangeSettings(range: LiveData<IntRange>, minView: EditText, maxView: EditText) =
+        range.observe(this, Observer {
+            minView.setText(it.first.toString())
+            maxView.setText(it.last.toString())
+        })
 
     private fun setupHairColorOptions() = viewModel.hairColors.sortedBy { it }.forEach {
         createCheckbox(it, binding.hairCheckBoxGroup)
@@ -101,13 +94,17 @@ class FiltersAlertDialog : DialogFragment() {
     private fun getRangeFromViews(minView: EditText, maxView: EditText) =
         minView.text.asInt()..maxView.text.asInt()
 
-    private fun setupApplyFiltersButton() = binding.searchButton.setOnClickListener {
-        val ageRange = getRangeFromViews(binding.ageFrom, binding.ageTo)
-        val weightRange = getRangeFromViews(binding.weightFrom, binding.weightTo)
-        val heightRange = getRangeFromViews(binding.heightFrom, binding.heightTo)
-        val hairColors = getMultipleSelectedOptions(binding.hairCheckBoxGroup)
-        val professions = getMultipleSelectedOptions(binding.professionsCheckBoxGroup)
-        viewModel.filterGnomes(ageRange, heightRange, weightRange, hairColors, professions)
-        dismissAllowingStateLoss()
+    private fun setupApplyFiltersButton() = binding.run {
+        searchButton.setOnClickListener {
+            viewModel.filterGnomes(
+                getRangeFromViews(ageFrom, ageTo),
+                getRangeFromViews(heightFrom, heightTo),
+                getRangeFromViews(weightFrom, weightTo),
+                getRangeFromViews(friendsFrom, friendsTo),
+                getMultipleSelectedOptions(hairCheckBoxGroup),
+                getMultipleSelectedOptions(professionsCheckBoxGroup)
+            )
+            dismissAllowingStateLoss()
+        }
     }
 }
