@@ -1,5 +1,5 @@
 <resources>
-    <string name="gnome_name">%1$s\nAge: %2$d</string>
+    <string name="gnome_name">%1$s\nAge: %2$d years old</string>
     <string name="app_name">Brastlewark</string>
     <string name="search_gnome_name">Search gnome by name</string>
     <string name="filter">Filter Gnomes</string>
@@ -11,4 +11,9 @@
     <string name="hair_color">Hair color</string>
     <string name="professions">Professions</string>
     <string name="apply_filters">Apply Filters</string>
+    <string name="gnome_age">Age: %1$d years old</string>
+    <string name="gnome_height">Height: %1$d cm</string>
+    <string name="gnome_weight">Weight: %1$d g</string>
+    <string name="gnome_hair_color">%1$s hair color</string>
+    <string name="friends">Friends</string>
 </resources>
