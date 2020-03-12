@@ -11,7 +11,6 @@ import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.Gnome
 import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.GnomeEntry.NAME_COLUMN
 import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.GnomeEntry.PROFESSIONS_COLUMN
 import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.GnomeEntry.SQL_CREATE_TABLE
-import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.GnomeEntry.SQL_DELETE_TABLE
 import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.GnomeEntry.TABLE_NAME
 import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.GnomeEntry.THUMBNAIL_URL_COLUMN
 import me.alfredobejarano.brastlewark.datasource.local.GnomeDataBaseHelper.GnomeEntry.WEIGHT_COLUMN
@@ -19,6 +18,9 @@ import me.alfredobejarano.brastlewark.model.Gnome
 import me.alfredobejarano.brastlewark.utils.asList
 import me.alfredobejarano.brastlewark.utils.asString
 
+/**
+ * Helper class that allows access to all the gnome rows in the local database.
+ */
 class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
     private object GnomeEntry : BaseColumns {
         const val TABLE_NAME = "gnomes"
@@ -41,18 +43,25 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
                 "$HAIR_COLOR_COLUMN TEXT, " +
                 "$PROFESSIONS_COLUMN TEXT, " +
                 "$FRIENDS_COLUMN TEXT)"
-
-        const val SQL_DELETE_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
     }
 
+    /**
+     * Creates the table for this model.
+     */
     fun createTable() {
         db?.execSQL(SQL_CREATE_TABLE)
     }
 
+    /**
+     * Deletes all contents in the table.
+     */
     fun nukeTable() {
-        db?.execSQL(SQL_DELETE_TABLE)
+        db?.delete(TABLE_NAME, null, null)
     }
 
+    /**
+     * Adds a gnome register in the table.
+     */
     fun create(gnome: Gnome) {
         val values = ContentValues().apply {
             gnome.run {
@@ -71,6 +80,11 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         db?.insert(TABLE_NAME, null, values)?.toInt()
     }
 
+    /**
+     * Retrieves a gnome from a database cursor.
+     * @param cursor Database cursor containing the Gnome data.
+     * @param closeCursor If the cursor has to be closed after retrieving the data.
+     */
     private fun getGnomeFromCursor(cursor: Cursor?, closeCursor: Boolean = false) = cursor?.run {
         val id = getInt(getColumnIndex(BaseColumns._ID))
         val name = getString(getColumnIndex(NAME_COLUMN))
@@ -85,6 +99,9 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         Gnome(id, name, thumbnail, age, weight, height, hairColor, professions, friends)
     } ?: Gnome()
 
+    /**
+     * Retrieves all the gnomes records.
+     */
     fun getAllGnomes(): List<Gnome> {
         val cursor = db?.query(TABLE_NAME, null, null, null, null, null, null)
         return mutableListOf<Gnome>().run {
@@ -96,6 +113,10 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         }
     }
 
+    /**
+     * Retrieves a gnome record by its name.
+     * @param gnomeName Name of the gnome.
+     */
     fun getGnomeByName(gnomeName: String): Gnome {
         val selection = "$NAME_COLUMN = ?"
         val args = arrayOf(gnomeName)

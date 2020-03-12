@@ -1,5 +1,8 @@
 package me.alfredobejarano.brastlewark.model
 
+/**
+ * Model class that contains the data of a Gnome.
+ */
 data class Gnome(
     val id: Int = -1,
     val name: String = "",

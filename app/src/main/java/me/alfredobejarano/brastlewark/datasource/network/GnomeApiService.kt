@@ -2,9 +2,6 @@ package me.alfredobejarano.brastlewark.datasource.network
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import me.alfredobejarano.brastlewark.BuildConfig
 import me.alfredobejarano.brastlewark.model.Gnome
 import me.alfredobejarano.brastlewark.utils.asSafeURL
@@ -25,6 +22,11 @@ object GnomeApiService {
 
     private val TIMEOUT = TimeUnit.SECONDS.toMillis(60000L).toInt()
 
+    /**
+     * Retrieves a JSON resource from the server URL.
+     * @param onSuccess Success callback containing the result.
+     * @param onError Callback reporting an error.
+     */
     fun getJSONResource(
         onSuccess: (gnomes: List<Gnome>) -> Unit, onError: (e: Exception) -> Unit
     ) = try {
