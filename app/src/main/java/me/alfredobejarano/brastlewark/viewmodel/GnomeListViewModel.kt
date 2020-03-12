@@ -18,8 +18,8 @@ class GnomeListViewModel(
     private val cachedPhotoRepository: CachedPhotoRepository
 ) : ViewModel() {
 
-    val hairColors = setOf<String>()
-    val professions = setOf<String>()
+    var hairColors = setOf<String>()
+    var professions = setOf<String>()
 
     private val gnomes = mutableListOf<Gnome>()
     private val gnomesMutableLiveData = MutableLiveData<List<Gnome>>()
@@ -31,8 +31,8 @@ class GnomeListViewModel(
                 gnomes.addAll(it.first ?: emptyList())
                 gnomes.sortBy { gnome -> gnome.name }
                 gnomes.forEach { gnome ->
-                    professions.plus(gnome.professions)
-                    hairColors.plus(gnome.hairColor)
+                    hairColors = hairColors.plus(gnome.hairColor)
+                    professions = professions.plus(gnome.professions)
                 }
                 gnomesMutableLiveData.postValue(gnomes)
             }

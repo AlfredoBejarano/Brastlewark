@@ -1,12 +1,15 @@
 package me.alfredobejarano.brastlewark
 
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout.LayoutParams
+import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -24,6 +27,7 @@ class FiltersAlertDialog : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, parent: ViewGroup?, state: Bundle?) =
         DialogFiltersBinding.inflate(inflater, parent, false).also {
             binding = it
+            binding.ageLabel.setOnClickListener { dismissAllowingStateLoss() }
             factory = Injector.getInstance(requireActivity().application)
                 .provideGnomeListViewModelFactory()
             viewModel =
@@ -34,12 +38,15 @@ class FiltersAlertDialog : DialogFragment() {
         setupRangedSettings()
         setupMultipleOptionSettings()
         setupApplyFiltersButton()
+        view.setBackgroundColor(Color.BLACK)
     }
 
     private fun setupRangedSettings() {
         getAgeSettings()
         getHeightSettings()
         getWeightSettings()
+        Log.d("COLORS", viewModel.hairColors.toString())
+        Log.d("PROFESSIONS", viewModel.professions.toString())
     }
 
     private fun setupMultipleOptionSettings() {
@@ -75,18 +82,22 @@ class FiltersAlertDialog : DialogFragment() {
         val checkBox = CheckBox(context).apply {
             tag = text
             setText(text)
+            setTextColor(Color.WHITE)
+            buttonTintList = ContextCompat.getColorStateList(context, R.color.checkbox_state_list)
         }
         parent.addView(checkBox, params)
     }
 
-    private fun getMultipleSelectedOptions(parent: ViewGroup) = setOf<String>().apply {
+    private fun getMultipleSelectedOptions(parent: ViewGroup): Set<String> {
+        var options = setOf<String>()
         parent.forEach {
             val checkBox = it as? CheckBox
             val tag = checkBox?.tag as? String
-            if (checkBox?.isSelected == true && !tag.isNullOrBlank()) {
-                plus(tag)
+            if (checkBox?.isChecked == true && !tag.isNullOrBlank()) {
+                options = options.plus(tag)
             }
         }
+        return options
     }
 
     private fun getRangeFromViews(minView: EditText, maxView: EditText) =

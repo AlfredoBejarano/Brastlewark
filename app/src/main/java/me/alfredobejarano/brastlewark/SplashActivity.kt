@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -48,7 +49,12 @@ class SplashActivity : AppCompatActivity() {
     })
 
     private fun getGnomeProfilePicture(src: String, iv: ImageView) =
-        viewModel.getGnomePicture(src).observe(this, Observer { iv.setImageBitmap(it) })
+        viewModel.getGnomePicture(src).observe(this, Observer {
+            val drawable = RoundedBitmapDrawableFactory.create(resources, it).apply {
+                isCircular = true
+            }
+            iv.setImageDrawable(drawable)
+        })
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)

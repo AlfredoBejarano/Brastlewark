@@ -20,6 +20,6 @@ fun List<String>.asString() = StringBuilder().also { builder ->
     }
 }.toString()
 
-fun String.asList() = this.split(SEPARATOR).toList()
+fun String.asList() = this.split(SEPARATOR).toList().filter { it.isNotEmpty() }.sortedBy { it }
 
 fun String.getFileNameFromURL() = split("/").last()
