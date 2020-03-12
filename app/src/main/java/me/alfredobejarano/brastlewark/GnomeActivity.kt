@@ -18,7 +18,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import me.alfredobejarano.brastlewark.databinding.ActivityGnomeBinding
 import me.alfredobejarano.brastlewark.model.Gnome
-import me.alfredobejarano.brastlewark.utils.createErrorBitmap
+import me.alfredobejarano.brastlewark.utils.createBitmap
 import me.alfredobejarano.brastlewark.utils.di.Injector
 import me.alfredobejarano.brastlewark.utils.observeWith
 import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
@@ -111,7 +111,7 @@ class GnomeActivity : AppCompatActivity() {
             databinding.pictureLoading.visibility = View.GONE
         }, {
             runOnWorkerThread {
-                val bitmap = createErrorBitmap(gnome.name)
+                val bitmap = createBitmap(gnome.name)
                 runOnUiThread {
                     databinding.gnomeProfilePicture.setRoundBitmap(bitmap)
                     databinding.pictureLoading.visibility = View.GONE

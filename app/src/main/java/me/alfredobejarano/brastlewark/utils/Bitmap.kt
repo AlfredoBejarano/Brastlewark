@@ -25,7 +25,13 @@ fun Bitmap.resize(newWidth: Int, newHeight: Int): Bitmap {
     return Bitmap.createBitmap(this, 0, 0, oldWidth, oldHeight, scaleMatrix, false)
 }
 
-fun createErrorBitmap(text: String): Bitmap {
+/**
+ * Creates a bitmap with a solid color as the background (chosen randomly by the system) and
+ * a given text in white.
+ *
+ * @param text The text that will be used to the bitmap.
+ */
+fun createBitmap(text: String): Bitmap {
     val canvasText = text.getNameCapitalLetters()
     val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textSize = 30f
