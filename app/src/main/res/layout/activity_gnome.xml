@@ -52,7 +52,7 @@
                 android:drawableStart="@drawable/ic_person_white_24dp"
                 android:drawablePadding="8dp"
                 android:gravity="start|center_vertical"
-                android:text="@{String.format(@string/gnome_age, gnome.age)}"
+                android:text="@{String.format(@plurals/gnome_age(gnome.age, gnome.age))}"
                 tools:text="Age: 30 years old" />
 
             <TextView
@@ -104,17 +104,17 @@
                 android:drawableStart="@drawable/ic_school_white_24dp"
                 android:drawablePadding="8dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/professions"
+                android:text="@{@plurals/gnome_professions(gnome.professions.size())}"
                 tools:text="Professions (1):" />
 
             <LinearLayout
-                android:layout_marginStart="8dp"
                 android:id="@+id/gnomeProfessionsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/gnomeProfessions"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical" />
 
@@ -128,17 +128,17 @@
                 android:drawableStart="@drawable/ic_group_white_24dp"
                 android:drawablePadding="8dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/friends"
+                android:text="@{@plurals/gnome_friends(gnome.friends.size())}"
                 tools:text="Friends (1):" />
 
             <LinearLayout
-                android:layout_marginStart="8dp"
                 android:id="@+id/gnomeFriendsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/gnomeFriends"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical" />
 

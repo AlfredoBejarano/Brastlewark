@@ -37,7 +37,7 @@
             android:layout_toEndOf="@id/gnomeProfilePicture"
             android:alpha="0.75"
             android:gravity="start|center_vertical"
-            android:text="@{String.format(@string/gnome_name, gnome.name, gnome.age)}"
+            android:text="@{@plurals/gnome_name(gnome.age, gnome.name, gnome.age)}"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             tools:text="I'm a Gnome!" />
