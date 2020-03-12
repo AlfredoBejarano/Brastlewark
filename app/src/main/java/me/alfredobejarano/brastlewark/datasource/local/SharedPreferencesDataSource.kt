@@ -2,7 +2,8 @@ package me.alfredobejarano.brastlewark.datasource.local
 
 import android.app.Application
 import android.content.Context
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 class SharedPreferencesDataSource(private val application: Application) {
     private companion object {
@@ -13,7 +14,7 @@ class SharedPreferencesDataSource(private val application: Application) {
     }
 
     private val preferences by lazy {
-        application.getSharedPreferences(GNOME_CACHE_KEY, Context.MODE_PRIVATE)
+        application.getSharedPreferences(SHARED_FILE_NAME, Context.MODE_PRIVATE)
     }
 
     private fun generateCacheTimeStamp() = Calendar.getInstance(Locale.getDefault()).run {

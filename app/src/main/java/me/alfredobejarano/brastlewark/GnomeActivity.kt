@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.MenuItem
 import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
 import android.widget.LinearLayout.LayoutParams.MATCH_PARENT
@@ -36,13 +37,20 @@ class GnomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestDependencies()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         databinding = DataBindingUtil.setContentView(this, R.layout.activity_gnome)
         intent?.extras?.getString(GNOME_NAME_KEY)?.let(::getGnome) ?: run { finish() }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == android.R.id.home) {
+        super.onBackPressed()
+        true
+    } else {
+        super.onOptionsItemSelected(item)
+    }
+
     private fun getGnome(name: String) = viewModel.getGnome(name).observe(this, Observer {
         databinding.apply {
-            val ctx = root.context
             gnome = it
             gnomeHairColor.compoundDrawables.filterNotNull().run {
                 if (isNotEmpty()) setGnomeHairColor(first(), it.hairColor)

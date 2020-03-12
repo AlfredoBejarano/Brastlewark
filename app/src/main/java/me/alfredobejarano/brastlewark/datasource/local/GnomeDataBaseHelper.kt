@@ -67,7 +67,8 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
                 put(FRIENDS_COLUMN, friends.asString())
             }
         }
-        db?.insert(TABLE_NAME, null, values)?.toInt() ?: -1
+
+        db?.insert(TABLE_NAME, null, values)?.toInt()
     }
 
     private fun getGnomeFromCursor(cursor: Cursor?, closeCursor: Boolean = false) = cursor?.run {
