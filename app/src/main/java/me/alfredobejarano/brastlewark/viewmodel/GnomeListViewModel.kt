@@ -84,7 +84,7 @@ class GnomeListViewModel(
     }
 
     fun getGnomePicture(src: String) = MutableLiveData<Bitmap>().apply {
-        cachedPhotoRepository.getPicture(src) { postValue(it.first) }
+        runOnWorkerThread { cachedPhotoRepository.getPicture(src) { postValue(it.first) } }
     } as LiveData<Bitmap>
 
     class Factory(

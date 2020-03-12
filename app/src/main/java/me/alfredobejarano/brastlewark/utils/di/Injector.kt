@@ -6,6 +6,7 @@ import me.alfredobejarano.brastlewark.datasource.local.SharedPreferencesDataSour
 import me.alfredobejarano.brastlewark.datasource.network.GnomeApiService
 import me.alfredobejarano.brastlewark.repository.CachedPhotoRepository
 import me.alfredobejarano.brastlewark.repository.GnomeRepository
+import me.alfredobejarano.brastlewark.viewmodel.GnomeDetailsViewModel
 import me.alfredobejarano.brastlewark.viewmodel.GnomeListViewModel
 
 class Injector private constructor(app: Application) {
@@ -40,4 +41,7 @@ class Injector private constructor(app: Application) {
 
     fun provideGnomeListViewModelFactory() =
         GnomeListViewModel.Factory(gnomeRepository, cachedPhotoRepository)
+
+    fun provideGnomeDetailsViewModelFactory() =
+        GnomeDetailsViewModel.Factory(gnomeRepository, cachedPhotoRepository)
 }

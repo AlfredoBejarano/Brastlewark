@@ -70,7 +70,7 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         db?.insert(TABLE_NAME, null, values)?.toInt() ?: -1
     }
 
-    private fun getGnomeFromCursor(cursor: Cursor?) = cursor?.run {
+    private fun getGnomeFromCursor(cursor: Cursor?, closeCursor: Boolean = false) = cursor?.run {
         val id = getInt(getColumnIndex(BaseColumns._ID))
         val name = getString(getColumnIndex(NAME_COLUMN))
         val thumbnail = getString(getColumnIndex(THUMBNAIL_URL_COLUMN))
@@ -80,7 +80,7 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         val hairColor = getString(getColumnIndex(HAIR_COLOR_COLUMN))
         val professions = getString(getColumnIndex(PROFESSIONS_COLUMN)).asList()
         val friends = getString(getColumnIndex(FRIENDS_COLUMN)).asList()
-
+        if (closeCursor) close()
         Gnome(id, name, thumbnail, age, weight, height, hairColor, professions, friends)
     } ?: Gnome()
 
@@ -99,7 +99,10 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         val selection = "$NAME_COLUMN = ?"
         val args = arrayOf(gnomeName)
         val cursor = db?.query(TABLE_NAME, null, selection, args, null, null, null)
-        cursor?.close()
-        return getGnomeFromCursor(cursor)
+        return if (cursor?.moveToNext() == true) {
+            getGnomeFromCursor(cursor, true)
+        } else {
+            Gnome()
+        }
     }
 }

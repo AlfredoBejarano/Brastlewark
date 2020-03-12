@@ -23,3 +23,9 @@ fun List<String>.asString() = StringBuilder().also { builder ->
 fun String.asList() = this.split(SEPARATOR).toList().filter { it.isNotEmpty() }.sortedBy { it }
 
 fun String.getFileNameFromURL() = split("/").last()
+
+fun List<String>.asCleanString() = this.map { it.replace(" T", "T") }.sortedBy { it }
+    .toString()
+    .replace("[", "")
+    .replace(", ]", "")
+    .replace("]", "")

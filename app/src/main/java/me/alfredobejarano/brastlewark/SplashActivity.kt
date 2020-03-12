@@ -2,6 +2,7 @@ package me.alfredobejarano.brastlewark
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -12,14 +13,15 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import me.alfredobejarano.brastlewark.databinding.ActivitySplashBinding
 import me.alfredobejarano.brastlewark.databinding.ItemGnomeBinding
 import me.alfredobejarano.brastlewark.model.Gnome
+import me.alfredobejarano.brastlewark.utils.asCleanString
 import me.alfredobejarano.brastlewark.utils.di.Injector
+import me.alfredobejarano.brastlewark.utils.setRoundBitmap
 import me.alfredobejarano.brastlewark.viewmodel.GnomeListViewModel
 
 class SplashActivity : AppCompatActivity() {
@@ -44,17 +46,22 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun observeGnomeList() = viewModel.gnomesLiveData.observe(this, Observer {
-        binding.gnomesListView.adapter = null
-        binding.gnomesListView.adapter = GnomeListAdapter(this, it)
+        binding.gnomesListView.apply {
+            adapter = null
+            adapter = GnomeListAdapter(this@SplashActivity, it)
+            setOnItemClickListener { _, _, position, _ -> openGnomeDetailsActivity(it[position].name) }
+        }
     })
 
+    private fun openGnomeDetailsActivity(gnomeName: String) = startActivity(
+        Intent(
+            this,
+            GnomeActivity::class.java
+        ).putExtra(GnomeActivity.GNOME_NAME_KEY, gnomeName)
+    )
+
     private fun getGnomeProfilePicture(src: String, iv: ImageView) =
-        viewModel.getGnomePicture(src).observe(this, Observer {
-            val drawable = RoundedBitmapDrawableFactory.create(resources, it).apply {
-                isCircular = true
-            }
-            iv.setImageDrawable(drawable)
-        })
+        viewModel.getGnomePicture(src).observe(this, Observer(iv::setRoundBitmap))
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
@@ -91,12 +98,7 @@ class SplashActivity : AppCompatActivity() {
             ItemGnomeBinding.inflate(LayoutInflater.from(ctx), parent, false).apply {
                 val gnomeAtPosition = gnomes[position]
                 gnome = gnomeAtPosition
-                professions.text =
-                    gnomeAtPosition.professions.map { it.replace(" T", "T") }.sortedBy { it }
-                        .toString()
-                        .replace("[", "")
-                        .replace(", ]", "")
-                        .replace("]", "")
+                professions.text = gnomeAtPosition.professions.asCleanString()
                 getGnomeProfilePicture(gnomeAtPosition.thumbnailUrl, gnomeProfilePicture)
             }.root
     }
