@@ -72,7 +72,7 @@ class GnomeListViewModel(
             val withProfessions =
                 if (professions.isEmpty()) true else professions.any(it.professions::contains)
             ageInRange && weightInRange && heightIntRange && withHairColor && withProfessions
-        }
+        }.sortedBy { it.name }
     }
 
     fun searchForGnomeByName(query: String) = gnomesMutableLiveData.map {
