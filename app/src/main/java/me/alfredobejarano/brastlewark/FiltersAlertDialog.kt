@@ -2,7 +2,6 @@ package me.alfredobejarano.brastlewark
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,8 +44,6 @@ class FiltersAlertDialog : DialogFragment() {
         getAgeSettings()
         getHeightSettings()
         getWeightSettings()
-        Log.d("COLORS", viewModel.hairColors.toString())
-        Log.d("PROFESSIONS", viewModel.professions.toString())
     }
 
     private fun setupMultipleOptionSettings() {
