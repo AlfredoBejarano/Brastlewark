@@ -81,8 +81,8 @@ object GnomeApiService {
             name = getString("name"),
             thumbnailUrl = getString("thumbnail"),
             age = getInt("age"),
-            weight = getDouble("weight"),
-            height = getDouble("height"),
+            weight = getDouble("weight").toInt(),
+            height = getDouble("height").toInt(),
             hairColor = getString("hair_color"),
             professions = getJSONArray("professions").asStringList(),
             friends = getJSONArray("friends").asStringList()

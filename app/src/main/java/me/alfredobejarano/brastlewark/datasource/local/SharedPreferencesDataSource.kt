@@ -9,7 +9,7 @@ class SharedPreferencesDataSource(private val application: Application) {
         const val GNOME_CACHE_KEY = "gnome_cahe"
         const val PICTURES_CACHE = "pictures_cache"
         const val SHARED_FILE_NAME = "cache"
-        const val CACHE_DURATION = 1 // Cache for 1 day.
+        const val CACHE_DURATION = 3 // Cache for 3 minutes.
     }
 
     private val preferences by lazy {
@@ -17,7 +17,7 @@ class SharedPreferencesDataSource(private val application: Application) {
     }
 
     private fun generateCacheTimeStamp() = Calendar.getInstance(Locale.getDefault()).run {
-        add(Calendar.DAY_OF_YEAR, CACHE_DURATION)
+        add(Calendar.MINUTE, CACHE_DURATION)
         timeInMillis
     }
 

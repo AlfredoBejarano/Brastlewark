@@ -30,15 +30,14 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         const val HAIR_COLOR_COLUMN = "hair_color"
         const val PROFESSIONS_COLUMN = "professions"
         const val FRIENDS_COLUMN = "friends"
-        const val NAME_KEY = "name_param"
 
         const val SQL_CREATE_TABLE = "CREATE TABLE $TABLE_NAME (" +
                 "${BaseColumns._ID} INTEGER PRIMARY KEY, " +
                 "$NAME_COLUMN TEXT, " +
                 "$THUMBNAIL_URL_COLUMN TEXT, " +
                 "$AGE_COLUMN INTEGER, " +
-                "$WEIGHT_COLUMN REAL, " +
-                "$HEIGHT_COLUMN REAL, " +
+                "$WEIGHT_COLUMN INTEGER, " +
+                "$HEIGHT_COLUMN INTEGER, " +
                 "$HAIR_COLOR_COLUMN TEXT, " +
                 "$PROFESSIONS_COLUMN TEXT, " +
                 "$FRIENDS_COLUMN TEXT)"
@@ -76,8 +75,8 @@ class GnomeDataBaseHelper(private val db: SQLiteDatabase?) {
         val name = getString(getColumnIndex(NAME_COLUMN))
         val thumbnail = getString(getColumnIndex(THUMBNAIL_URL_COLUMN))
         val age = getInt(getColumnIndex(AGE_COLUMN))
-        val weight = getDouble(getColumnIndex(WEIGHT_COLUMN))
-        val height = getDouble(getColumnIndex(HEIGHT_COLUMN))
+        val weight = getInt(getColumnIndex(WEIGHT_COLUMN))
+        val height = getInt(getColumnIndex(HEIGHT_COLUMN))
         val hairColor = getString(getColumnIndex(HAIR_COLOR_COLUMN))
         val professions = getString(getColumnIndex(PROFESSIONS_COLUMN)).asList()
         val friends = getString(getColumnIndex(FRIENDS_COLUMN)).asList()

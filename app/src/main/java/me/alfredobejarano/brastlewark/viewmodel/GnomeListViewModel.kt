@@ -48,12 +48,12 @@ class GnomeListViewModel(
 
     fun getHeightSettings() = forLiveData {
         gnomes.sortBy { it.weight }
-        gnomes.first().height.toInt()..gnomes.last().height.toInt()
+        gnomes.first().height..gnomes.last().height
     }
 
     fun getWeightSettings() = forLiveData {
         gnomes.sortBy { it.weight }
-        gnomes.first().weight.toInt()..gnomes.last().weight.toInt()
+        gnomes.first().weight..gnomes.last().weight
     }
 
     fun filterGnomes(

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/gnomeProfilePicture"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/gnomeName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gnomeProfilePicture"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:alpha="0.7"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/gnomeHeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gnomeName"
+            android:layout_marginTop="8dp"
+            android:alpha="0.75"
+            android:drawableStart="@drawable/ic_close_white_24dp"
+            android:drawablePadding="8dp"
+            android:gravity="start|center_vertical"
+            tools:text="Height: 98 cm" />
+
+        <TextView
+            android:id="@+id/gnomeWeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gnomeHeight"
+            android:layout_marginTop="8dp"
+            android:alpha="0.75"
+            android:drawableStart="@drawable/ic_close_white_24dp"
+            android:drawablePadding="8dp"
+            android:gravity="start|center_vertical"
+            tools:text="Weight: 44 g" />
+    </RelativeLayout>
+</ScrollView>
