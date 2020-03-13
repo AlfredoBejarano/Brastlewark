@@ -57,14 +57,14 @@ class SplashActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory)[GnomeListViewModel::class.java]
     }
 
-    private fun observeGnomeList() = viewModel.gnomesLiveData.observeWith(this) {
+    private fun observeGnomeList() = viewModel.gnomesLiveData.observeWith(this, {
         binding.gnomesListView.apply {
             adapter = null
             adapter = GnomeListAdapter(this@SplashActivity, it)
             setOnItemClickListener { _, _, position, _ -> openGnomeDetailsActivity(it[position].name) }
         }
         binding.splashLoading.visibility = View.GONE
-    }
+    })
 
     private fun openGnomeDetailsActivity(gnomeName: String) = startActivity(
         Intent(

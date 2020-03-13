@@ -53,7 +53,7 @@ class GnomeActivity : AppCompatActivity() {
         super.onOptionsItemSelected(item)
     }
 
-    private fun getGnome(name: String) = viewModel.getGnome(name).observeWith(this) {
+    private fun getGnome(name: String) = viewModel.getGnome(name).observeWith(this, {
         databinding.apply {
             gnome = it
             gnomeHairColor.compoundDrawables.filterNotNull().run {
@@ -69,7 +69,7 @@ class GnomeActivity : AppCompatActivity() {
             setFriendsClickListeners()
             gnomeLoading.visibility = View.GONE
         }
-    }
+    })
 
     private fun addTextView(text: String, parent: LinearLayout) {
         TextView(this).apply {
