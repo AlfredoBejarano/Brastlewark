@@ -21,8 +21,6 @@ class CachedPhotoDataBaseHelper(private val db: SQLiteDatabase?) {
         const val SQL_CREATE_TABLE = "CREATE TABLE $TABLE_NAME (" +
                 "$URL_COLUMN TEXT PRIMARY KEY, " +
                 "$PATH_COLUMN TEXT)"
-
-        const val SQL_DELETE_TABLE = "DROP TABLE IF EXISTS $TABLE_NAME"
     }
 
     /**
