@@ -12,9 +12,11 @@ import android.widget.LinearLayout.LayoutParams
 import android.widget.LinearLayout.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import me.alfredobejarano.brastlewark.databinding.ActivityGnomeBinding
 import me.alfredobejarano.brastlewark.model.Gnome
@@ -25,6 +27,9 @@ import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
 import me.alfredobejarano.brastlewark.utils.setRoundBitmap
 import me.alfredobejarano.brastlewark.viewmodel.GnomeDetailsViewModel
 
+/**
+ * Activity that displays the details of a gnome.
+ */
 class GnomeActivity : AppCompatActivity() {
     companion object {
         const val GNOME_NAME_KEY = "${BuildConfig.APPLICATION_ID}.GNOME_NAME_KEY"
@@ -41,6 +46,7 @@ class GnomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestDependencies()
+        observeErrors()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         databinding = DataBindingUtil.setContentView(this, R.layout.activity_gnome)
         intent?.extras?.getString(GNOME_NAME_KEY)?.let(::getGnome) ?: run { finish() }
@@ -53,6 +59,10 @@ class GnomeActivity : AppCompatActivity() {
         super.onOptionsItemSelected(item)
     }
 
+    /**
+     * Retrieves the gnome data by its name.
+     * @param name Name of the gnome.
+     */
     private fun getGnome(name: String) = viewModel.getGnome(name).observeWith(this, {
         databinding.apply {
             gnome = it
@@ -71,6 +81,9 @@ class GnomeActivity : AppCompatActivity() {
         }
     })
 
+    /**
+     * Creates a TextView and adds it to a parent ViewGroup.
+     */
     private fun addTextView(text: String, parent: LinearLayout) {
         TextView(this).apply {
             val params = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
@@ -88,6 +101,9 @@ class GnomeActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Sets the lick listener for any friends in the list.
+     */
     private fun setFriendsClickListeners() = databinding.gnomeFriendsList.forEach {
         val textView = it as? TextView
         val name = textView?.text?.toString() ?: ""
@@ -98,6 +114,9 @@ class GnomeActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Sets the gnome hair color view.
+     */
     private fun setGnomeHairColor(drawable: Drawable?, hairColor: String) = drawable?.run {
         val color = getGnomeHairColor(hairColor)
         if (color != 0) {
@@ -105,6 +124,10 @@ class GnomeActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Sets the gnome picture
+     * @param gnome The gnome data.
+     */
     private fun getGnomePicture(gnome: Gnome) =
         viewModel.getGnomePicture(gnome.thumbnailUrl).observeWith(this, {
             it.run(databinding.gnomeProfilePicture::setRoundBitmap)
@@ -119,11 +142,17 @@ class GnomeActivity : AppCompatActivity() {
             }
         })
 
+    /**
+     * Request the dependencies from the [Injector] object.
+     */
     private fun requestDependencies() {
         factory = Injector.getInstance(application).provideGnomeDetailsViewModelFactory()
         viewModel = ViewModelProvider(this, factory)[GnomeDetailsViewModel::class.java]
     }
 
+    /**
+     * Retrieves the gnome hair color to be applied as a tint to the hair color view.
+     */
     private fun getGnomeHairColor(color: String) = when (color) {
         HAIR_COLOR_GRAY -> Color.GRAY
         HAIR_COLOR_GREEN -> Color.GREEN
@@ -132,10 +161,20 @@ class GnomeActivity : AppCompatActivity() {
         else -> 0
     }
 
+    /**
+     * Shows the details of a gnome friend.
+     */
     private fun openGnomeDetailsActivity(gnomeName: String) = startActivity(
         Intent(
             this,
             GnomeActivity::class.java
         ).putExtra(GnomeActivity.GNOME_NAME_KEY, gnomeName)
     )
+
+    /**
+     * Observes error events and displays a toast.
+     */
+    private fun observeErrors() = Events.errorLiveData.observe(this, Observer {
+        it.run { Toast.makeText(this@GnomeActivity, localizedMessage, Toast.LENGTH_SHORT).show() }
+    })
 }

@@ -19,6 +19,9 @@ import me.alfredobejarano.brastlewark.utils.asInt
 import me.alfredobejarano.brastlewark.utils.di.Injector
 import me.alfredobejarano.brastlewark.viewmodel.GnomeListViewModel
 
+/**
+ * Dialog class that displays filters to apply for gnomes searches.
+ */
 class FiltersAlertDialog : DialogFragment() {
     private lateinit var binding: DialogFiltersBinding
     private lateinit var viewModel: GnomeListViewModel
@@ -53,21 +56,33 @@ class FiltersAlertDialog : DialogFragment() {
         setupProfessionOptions()
     }
 
+    /**
+     * Retrieves the range settings for views.
+     */
     private fun getRangeSettings(range: LiveData<IntRange>, minView: EditText, maxView: EditText) =
         range.observe(this, Observer {
             minView.setText(it.first.toString())
             maxView.setText(it.last.toString())
         })
 
+    /**
+     * Setups the hair color options.
+     */
     private fun setupHairColorOptions() = viewModel.hairColors.sortedBy { it }.forEach {
         createCheckbox(it, binding.hairCheckBoxGroup)
     }
 
+    /**
+     * Setups the professions as options.
+     */
     private fun setupProfessionOptions() =
         viewModel.professions.map { it.replace(" T", "T") }.sortedBy { it }.forEach {
             createCheckbox(it, binding.professionsCheckBoxGroup)
         }
 
+    /**
+     * Creates a checkbox elements.
+     */
     private fun createCheckbox(text: String, parent: ViewGroup) {
         val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         val checkBox = CheckBox(context).apply {
@@ -79,6 +94,9 @@ class FiltersAlertDialog : DialogFragment() {
         parent.addView(checkBox, params)
     }
 
+    /**
+     * Retrieves selected options from multiple options selections.
+     */
     private fun getMultipleSelectedOptions(parent: ViewGroup): Set<String> {
         var options = setOf<String>()
         parent.forEach {
@@ -91,9 +109,15 @@ class FiltersAlertDialog : DialogFragment() {
         return options
     }
 
+    /**
+     * Retrieves IntRange objects from the views that allows minimum and maximum values.
+     */
     private fun getRangeFromViews(minView: EditText, maxView: EditText) =
         minView.text.asInt()..maxView.text.asInt()
 
+    /**
+     * Sets the click listener that will apply the given filters to the gnomes list.
+     */
     private fun setupApplyFiltersButton() = binding.run {
         searchButton.setOnClickListener {
             viewModel.filterGnomes(

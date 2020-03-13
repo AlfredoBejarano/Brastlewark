@@ -29,7 +29,10 @@ import me.alfredobejarano.brastlewark.utils.runOnWorkerThread
 import me.alfredobejarano.brastlewark.utils.setRoundBitmap
 import me.alfredobejarano.brastlewark.viewmodel.GnomeListViewModel
 
-class SplashActivity : AppCompatActivity() {
+/**
+ * Activity displaying the list of gnomes. This is the app firs't screen.
+ */
+class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: GnomeListViewModel
     private lateinit var binding: ActivitySplashBinding
     private lateinit var factory: GnomeListViewModel.Factory
@@ -46,26 +49,38 @@ class SplashActivity : AppCompatActivity() {
         viewModel.getGnomeList()
     }
 
+    /**
+     * Observes error events and displays a toast.
+     */
     private fun observeErrors() = Events.errorLiveData.observe(this, Observer {
         it?.run {
-            Toast.makeText(this@SplashActivity, localizedMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@MainActivity, localizedMessage, Toast.LENGTH_SHORT).show()
         }
     })
 
+    /**
+     * Request the dependencies from the injector.
+     */
     private fun requestDependencies() {
         factory = Injector.getInstance(application).provideGnomeListViewModelFactory()
         viewModel = ViewModelProvider(this, factory)[GnomeListViewModel::class.java]
     }
 
+    /**
+     * Observes changes in the gnome list.
+     */
     private fun observeGnomeList() = viewModel.gnomesLiveData.observeWith(this, {
         binding.gnomesListView.apply {
             adapter = null
-            adapter = GnomeListAdapter(this@SplashActivity, it)
+            adapter = GnomeListAdapter(this@MainActivity, it)
             setOnItemClickListener { _, _, position, _ -> openGnomeDetailsActivity(it[position].name) }
         }
         binding.splashLoading.visibility = View.GONE
     })
 
+    /**
+     * Opens details of a clicked gnome from the list.
+     */
     private fun openGnomeDetailsActivity(gnomeName: String) = startActivity(
         Intent(
             this,
@@ -73,6 +88,9 @@ class SplashActivity : AppCompatActivity() {
         ).putExtra(GnomeActivity.GNOME_NAME_KEY, gnomeName)
     )
 
+    /**
+     * Retrieves the profile picture from the Gnome.
+     */
     private fun getGnomeProfilePicture(gnome: Gnome, iv: ImageView, pb: ProgressBar) =
         viewModel.getGnomePicture(gnome.thumbnailUrl).observeWith(this, {
             iv.setRoundBitmap(it)
@@ -93,6 +111,9 @@ class SplashActivity : AppCompatActivity() {
         return true
     }
 
+    /**
+     * Sets the SearchView form the toolbar.
+     */
     private fun setupSearchView(searchView: SearchView?) = searchView?.run {
         queryHint = getString(R.string.search_gnome_name)
         setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -111,12 +132,21 @@ class SplashActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    /**
+     * Opens the filter dialog.
+     */
     private fun launchFilterDialog() =
         FiltersAlertDialog().show(supportFragmentManager, FiltersAlertDialog::class.java.simpleName)
 
+    /**
+     * Adapter class that displays gnomes in a ListView.
+     */
     inner class GnomeListAdapter(private val ctx: Context, private val gnomes: List<Gnome>) :
         ArrayAdapter<Gnome>(ctx, R.layout.item_gnome, gnomes) {
 
+        /**
+         * Tells how to draw the view in the list.
+         */
         @SuppressLint("ViewHolder")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup) =
             ItemGnomeBinding.inflate(LayoutInflater.from(ctx), parent, false).apply {
